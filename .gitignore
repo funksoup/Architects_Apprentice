@@ -1,2 +1,4 @@
 # API key — never commit this
+.env
 config.js
+node_modules/
