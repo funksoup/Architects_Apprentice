@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Architect's Apprentice</title>
+
+  <!--
+    API KEY SETUP
+    Copy config.example.js → config.js and add your key there.
+    config.js is gitignored so it never gets committed.
+    If config.js is missing a one-time modal will ask for the key.
+  -->
+  <script src="config.js" onerror="/* config.js not present — will prompt at runtime */"></script>
+
+  <style>
+    /* =====================
+       PAGE BACKGROUND
+       Full-bleed architectural image with a dark overlay so
+       the white card containers always stay readable.
+    ===================== */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      line-height: 1.6;
+      color: #333;
+
+      /* Fallback colour while image loads */
+      background-color: #1a2a3a;
+
+      /* Taj Mahal — verified 1280px thumbnail */
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Taj_Mahal%2C_Agra%2C_India_edit2.jpg/1280px-Taj_Mahal%2C_Agra%2C_India_edit2.jpg');
+      background-size: cover;
+      background-position: center 40%;
+      background-attachment: fixed;
+    }
+
+    /* Dark overlay so the background doesn't fight the card */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 25, 45, 0.62);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Scrollable content wrapper that sits above the overlay */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* =====================
+       CARD CONTAINERS
+    ===================== */
+    .container {
+      background: white;
+      padding: 36px 36px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    }
+
+    /* =====================
+       TYPOGRAPHY
+    ===================== */
+    h1 {
+      font-size: 32px;
+      margin: 0 0 6px;
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 17px;
+      color: #7f8c8d;
+      text-align: center;
+      margin: 0 0 32px;
+    }
+
+    .question {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 20px 0;
+      line-height: 1.5;
+    }
+
+    .cultural-note {
+      font-style: italic;
+      color: #555;
+      font-size: 15px;
+      margin: 15px 0;
+      padding: 10px 14px;
+      background: #f0f8ff;
+      border-left: 3px solid #3498db;
+      border-radius: 0 6px 6px 0;
+    }
+
+    /* =====================
+       BUILDING NAME + CONCEPT BADGE
+    ===================== */
+    .building-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 20px 0 6px;
+    }
+
+    .concept-badge {
+      display: inline-block;
+      background: #f0f4ff;
+      color: #3a4a8a;
+      border: 1.5px solid #c5d0f0;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    .text-center { text-align: center; }
+
+    /* =====================
+       HERO IMAGE
+    ===================== */
+    .challenge-img {
+      display: block;
+      height: 440px;
+      object-fit: cover;
+      margin: -36px -36px 20px -36px;
+      width: calc(100% + 72px);
+      border-radius: 12px 12px 0 0;
+    }
+
+    .img-error-placeholder {
+      display: none;
+      height: 200px;
+      background: #f0f4f8;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    /* =====================
+       FORM ELEMENTS
+    ===================== */
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      color: #333;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    select:focus { outline: none; border-color: #3498db; }
+
+    optgroup {
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    optgroup option {
+      font-weight: 400;
+      color: #333;
+      padding-left: 8px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #555;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 18px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+    }
+
+    input[type="number"]:focus { outline: none; border-color: #3498db; }
+
+    /* =====================
+       BUTTONS
+    ===================== */
+    button {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover:not(:disabled) { background: #3d5166; }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    .secondary-button {
+      background: #ecf0f1;
+      color: #2c3e50;
+      padding: 10px 20px;
+      font-size: 15px;
+    }
+
+    .secondary-button:hover:not(:disabled) { background: #dde1e4; }
+
+    .hint-toggle, .answer-toggle {
+      background: none;
+      border: 1.5px solid #bbb;
+      color: #555;
+      padding: 7px 16px;
+      font-size: 14px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+
+    .hint-toggle:hover, .answer-toggle:hover { background: #f5f5f5; border-color: #999; }
+
+    .start-btn-wrap {
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    .select-wrapper { margin-bottom: 8px; }
+
+    /* =====================
+       HINT & ANSWER BOXES
+    ===================== */
+    .hint-box, .answer-box {
+      background: #fffbeb;
+      border: 1.5px solid #f0c040;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 15px;
+      margin-bottom: 12px;
+      line-height: 1.7;
+    }
+
+    .answer-box {
+      background: #f0fff4;
+      border-color: #48bb78;
+    }
+
+    .answer-box strong { color: #276749; }
+
+    .hidden { display: none !important; }
+
+    /* =====================
+       FEEDBACK AREA
+    ===================== */
+    .feedback {
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 1.6;
+      background: #e8f5e9;
+      border-left: 4px solid #27ae60;
+    }
+
+    .feedback.incorrect {
+      background: #fef9e7;
+      border-left-color: #f39c12;
+    }
+
+    .feedback.error {
+      background: #fdedec;
+      border-left-color: #e74c3c;
+    }
+
+    /* =====================
+       LOADING SPINNER
+    ===================== */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(0,0,0,0.15);
+      border-top-color: #2c3e50;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* =====================
+       API KEY MODAL
+    ===================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-box {
+      background: white;
+      padding: 36px;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .modal-box h2 { margin: 0 0 12px; color: #2c3e50; }
+    .modal-box p  { color: #555; font-size: 15px; margin: 0 0 18px; }
+    .modal-box input { width: 100%; padding: 12px; font-size: 15px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; }
+    .modal-error { color: #e74c3c; font-size: 14px; min-height: 20px; margin: 0 0 10px; }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== API KEY MODAL ==================== -->
+  <div id="key-modal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <h2>🔑 Enter your API key</h2>
+      <p>
+        The Architect's Apprentice uses the Claude API to give you personalised Socratic feedback.
+        Paste your Anthropic API key below to get started.<br><br>
+        To skip this prompt in future, add your key to <code>config.js</code>
+        (copy <code>config.example.js</code> as a starting point).
+      </p>
+      <input type="password" id="modal-key-input"
+             placeholder="sk-ant-api03-…"
+             autocomplete="off" spellcheck="false" />
+      <p id="modal-key-error" class="modal-error"></p>
+      <button onclick="submitModalKey()">Start playing →</button>
+    </div>
+  </div>
+
+  <div class="page-wrapper">
+
+    <!-- ==================== LANDING PAGE ==================== -->
+    <div id="landing" class="container">
+      <h1>The Architect's Apprentice</h1>
+      <p class="subtitle">Learn geometry through Global South architecture</p>
+
+      <div class="select-wrapper">
+        <select id="challenge-select">
+          <option value="">— Choose a challenge —</option>
+          <optgroup label="🇪🇹 Ethiopia">
+            <option value="ethiopia_0">Bete Giyorgis, Lalibela</option>
+            <option value="ethiopia_1">Fasil Ghebbi, Gondar</option>
+            <option value="ethiopia_2">Obelisk of Axum</option>
+          </optgroup>
+          <optgroup label="🇲🇽 Mexico">
+            <option value="mexico_0">El Castillo, Chichen Itza</option>
+            <option value="mexico_1">Pyramid of the Sun, Teotihuacan</option>
+            <option value="mexico_2">Monte Albán, Oaxaca</option>
+          </optgroup>
+          <optgroup label="🇮🇳 India">
+            <option value="india_0">Taj Mahal, Agra</option>
+            <option value="india_1">Qutb Minar, Delhi</option>
+            <option value="india_2">Jantar Mantar, Jaipur</option>
+          </optgroup>
+          <optgroup label="🇪🇬 Egypt">
+            <option value="egypt_0">Great Pyramid of Giza</option>
+            <option value="egypt_1">Karnak Temple Complex</option>
+            <option value="egypt_2">Abu Simbel</option>
+          </optgroup>
+          <optgroup label="🇰🇭 Cambodia">
+            <option value="cambodia_0">Angkor Wat, Siem Reap</option>
+            <option value="cambodia_1">Bayon, Angkor Thom</option>
+            <option value="cambodia_2">Banteay Srei</option>
+          </optgroup>
+          <optgroup label="🇵🇪 Peru">
+            <option value="peru_0">Machu Picchu, Cusco Region</option>
+            <option value="peru_1">Sacsayhuamán, Cusco</option>
+            <option value="peru_2">Chan Chan, Trujillo</option>
+          </optgroup>
+          <optgroup label="🇯🇴 Jordan">
+            <option value="jordan_0">Al-Khazneh (Treasury), Petra</option>
+            <option value="jordan_1">Oval Forum, Jerash</option>
+            <option value="jordan_2">Wadi Rum Desert</option>
+          </optgroup>
+          <optgroup label="🇲🇱 Mali">
+            <option value="mali_0">Great Mosque of Djenné</option>
+            <option value="mali_1">Sankore Mosque, Timbuktu</option>
+            <option value="mali_2">Tomb of Askia, Gao</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="start-btn-wrap">
+        <button onclick="startChallenge()">Start Challenge →</button>
+      </div>
+    </div>
+
+    <!-- ==================== CHALLENGE CARD ==================== -->
+    <div id="challenge-card" class="container hidden">
+
+      <!-- Building image — referrerpolicy prevents Wikimedia hotlink blocks -->
+      <img id="challenge-img"
+           class="challenge-img"
+           src="" alt=""
+           referrerpolicy="no-referrer"
+           onerror="handleImgError(this)" />
+
+      <!-- Shown if image fails to load -->
+      <div id="img-placeholder" class="img-error-placeholder">
+        🏛️<br>Image unavailable — but the architecture is just as beautiful!
+      </div>
+
+      <p id="challenge-building" class="building-name"></p>
+      <div class="text-center">
+        <span id="challenge-concept" class="concept-badge"></span>
+      </div>
+
+      <p id="challenge-cultural" class="cultural-note"></p>
+      <p id="challenge-question" class="question"></p>
+
+      <!-- Hint — only shown when the challenge has a hint field -->
+      <div id="hint-area" class="hidden">
+        <button class="hint-toggle" onclick="toggleHint()">💡 Show hint</button>
+        <div id="hint-box" class="hint-box hidden"></div>
+      </div>
+
+      <!-- Answer reveal — always available -->
+      <div id="answer-area">
+        <button class="answer-toggle" onclick="toggleAnswer()">📖 Show me the answer</button>
+        <div id="answer-box" class="answer-box hidden"></div>
+      </div>
+
+      <label for="answer-input">Your answer:</label>
+      <input type="number" id="answer-input" step="any" placeholder="Enter a number" />
+
+      <div>
+        <button id="submit-btn" onclick="submitAnswer()">Submit Answer</button>
+      </div>
+
+      <div id="feedback-area" class="feedback hidden"></div>
+
+      <div style="margin-top:22px;">
+        <button class="secondary-button" onclick="returnToMenu()">↩ Try Another Challenge</button>
+      </div>
+
+    </div>
+  </div><!-- end .page-wrapper -->
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // =====================================================
+    //  API KEY — loaded from config.js if present, else modal
+    // =====================================================
+    let ANTHROPIC_API_KEY = (typeof window.ANTHROPIC_API_KEY === 'string' && window.ANTHROPIC_API_KEY)
+      ? window.ANTHROPIC_API_KEY
+      : '';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!ANTHROPIC_API_KEY) {
+        document.getElementById('key-modal').classList.remove('hidden');
+        document.getElementById('modal-key-input').focus();
+      }
+    });
+
+    function submitModalKey() {
+      const val   = document.getElementById('modal-key-input').value.trim();
+      const errEl = document.getElementById('modal-key-error');
+
+      if (!val) { errEl.textContent = 'Please paste your API key.'; return; }
+      if (!val.startsWith('sk-ant-')) {
+        errEl.textContent = "Doesn't look right — Anthropic keys start with sk-ant-";
+        return;
+      }
+
+      ANTHROPIC_API_KEY = val;
+      document.getElementById('modal-key-input').value = ''; // clear from DOM
+      document.getElementById('key-modal').classList.add('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('modal-key-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') submitModalKey();
+      });
+    });
+
+    // =====================================================
+    //  CHALLENGE DATA — 24 challenges, 3 per country
+    //  Images: Wikimedia Commons (MD5-based URLs, referrerpolicy="no-referrer")
+    // =====================================================
+    const challenges = {
+
+      // ——————————————————— ETHIOPIA ———————————————————
+
+      ethiopia_0: {
+        country:      'Ethiopia',
+        building:     'Bete Giyorgis, Lalibela, Ethiopia',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Bete_Giyorgis_Lalibela_Ethiopia.jpg/640px-Bete_Giyorgis_Lalibela_Ethiopia.jpg',
+        culturalNote: 'This 12th-century church was carved from solid volcanic rock as part of a "New Jerusalem" for Ethiopian pilgrims. It took 24 years to complete.',
+        concept:      'Symmetry',
+        question:     'This church is carved in the shape of a perfect cross. How many lines of symmetry does a cross have?',
+        hint:         'A line of symmetry divides a shape into two perfect mirror halves. Try folding the cross mentally — how many different ways can you fold it so both sides match exactly?',
+        correctAnswer: 4,
+        tolerance:    0,
+        unit:         '',
+        explanation:  'A Greek cross (four equal arms) has <strong>4 lines of symmetry</strong>: one vertical, one horizontal, and two diagonal. Each fold creates two identical mirror-image halves.'
+      },
+
+      ethiopia_1: {
+        country:      'Ethiopia',
+        building:     'Fasil Ghebbi, Gondar, Ethiopia',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Fasiladas_Castle%2C_Gondar%2C_Amhara_Region%2C_Ethiopia.JPG/960px-Fasiladas_Castle%2C_Gondar%2C_Amhara_Region%2C_Ethiopia.JPG',
+        culturalNote: 'Built in the 17th century by Emperor Fasilides, this royal enclosure in Gondar became known as the "Camelot of Africa." It combines Ethiopian, Portuguese, and Islamic architectural styles.',
+        concept:      'Area',
+        question:     'The Royal Enclosure of Fasil Ghebbi stretches approximately 900 m long and 700 m wide. What is the total area in square metres?',
+        hint:         'Area of a rectangle = length × width. Multiply the two dimensions together.',
+        correctAnswer: 630000,
+        tolerance:    0,
+        unit:         'm²',
+        explanation:  'Area = length × width = 900 × 700 = <strong>630,000 m²</strong> (63 hectares).'
+      },
+
+      ethiopia_2: {
+        country:      'Ethiopia',
+        building:     'Obelisk of Axum, Ethiopia',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Large_obelisk_in_Axum%2C_Ethiopia.jpg/960px-Large_obelisk_in_Axum%2C_Ethiopia.jpg',
+        culturalNote: 'Carved c. 4th century CE, the standing Axum Stele (Stele 2) is 24 m tall and weighs 150 tonnes. These granite obelisks were funerary monuments for the Aksumite kings.',
+        concept:      'Trigonometry',
+        question:     'The Axum Stele stands 24 m tall and casts a shadow 15 m long. What is the sun\'s angle of elevation in degrees? (Round to 1 decimal place.)',
+        hint:         'Use inverse tangent: angle = tan⁻¹(opposite ÷ adjacent) = tan⁻¹(height ÷ shadow length). On a calculator: tan⁻¹(24 ÷ 15).',
+        correctAnswer: 58.0,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(height ÷ shadow) = tan⁻¹(24 ÷ 15) = tan⁻¹(1.6) ≈ <strong>58.0°</strong>.'
+      },
+
+      // ——————————————————— MEXICO ———————————————————
+
+      mexico_0: {
+        country:      'Mexico',
+        building:     'El Castillo, Chichen Itza, Mexico',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Chichen_Itza_3.jpg/800px-Chichen_Itza_3.jpg',
+        culturalNote: 'Mayan astronomers designed this pyramid so that during the spring and fall equinoxes, the sun creates a serpent-shaped shadow descending the stairs — a stunning blend of geometry and astronomy.',
+        concept:      'Trigonometry',
+        question:     'During the equinox, sunlight casts a serpent shadow on the pyramid. If the pyramid is 30 m tall and the shadow travels 25 m horizontally, what angle (°) is the sun at?',
+        hint:         'Use inverse tangent: angle = tan⁻¹(opposite ÷ adjacent) = tan⁻¹(height ÷ horizontal distance). On a calculator: tan⁻¹(30 ÷ 25).',
+        correctAnswer: 50.2,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(height ÷ horizontal) = tan⁻¹(30 ÷ 25) = tan⁻¹(1.2) ≈ <strong>50.2°</strong>.'
+      },
+
+      mexico_1: {
+        country:      'Mexico',
+        building:     'Pyramid of the Sun, Teotihuacan, Mexico',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Sun_Pyramid_05_2015_Teotihuacan_3304.JPG/960px-Sun_Pyramid_05_2015_Teotihuacan_3304.JPG',
+        culturalNote: 'Completed c. 200 CE, the Pyramid of the Sun is the third-largest pyramid on Earth. Its base of 225 m × 225 m is nearly identical in perimeter to the Great Pyramid of Giza.',
+        concept:      'Trigonometry',
+        question:     'The Pyramid of the Sun is 66 m tall with a square base of 225 m per side. What angle (°) does the sloping face make with the ground? (Round to 1 decimal place.)',
+        hint:         'Draw a right triangle from the centre of the base to the apex. The opposite side is the height (66 m) and the adjacent side is half the base length (225 ÷ 2 = 112.5 m). angle = tan⁻¹(66 ÷ 112.5).',
+        correctAnswer: 30.4,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'Half the base = 225 ÷ 2 = 112.5 m. angle = tan⁻¹(height ÷ half-base) = tan⁻¹(66 ÷ 112.5) = tan⁻¹(0.587) ≈ <strong>30.4°</strong>.'
+      },
+
+      mexico_2: {
+        country:      'Mexico',
+        building:     'Monte Albán, Oaxaca, Mexico',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Monte_Alban%2C_Oaxaca._Agosto_2009.JPG/960px-Monte_Alban%2C_Oaxaca._Agosto_2009.JPG',
+        culturalNote: 'Founded c. 500 BCE by the Zapotec people, Monte Albán was one of the first cities in Mesoamerica. Its main plaza was levelled from a mountaintop and oriented to align with astronomical events.',
+        concept:      'Perimeter',
+        question:     'The main plaza at Monte Albán is approximately 300 m long and 200 m wide. What is the perimeter of the plaza in metres?',
+        hint:         'Perimeter of a rectangle = 2 × (length + width). Add the length and width first, then multiply by 2.',
+        correctAnswer: 1000,
+        tolerance:    0,
+        unit:         'metres',
+        explanation:  'Perimeter = 2 × (length + width) = 2 × (300 + 200) = 2 × 500 = <strong>1,000 m</strong>.'
+      },
+
+      // ——————————————————— INDIA ———————————————————
+
+      india_0: {
+        country:      'India',
+        building:     'Taj Mahal, Agra, India',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Taj_Mahal%2C_Agra%2C_India_edit2.jpg/960px-Taj_Mahal%2C_Agra%2C_India_edit2.jpg',
+        culturalNote: 'Built by Mughal emperor Shah Jahan in memory of his wife Mumtaz Mahal (1632–1653), the Taj Mahal\'s perfect symmetry and its reflection in the long pool are feats of Mughal geometry.',
+        concept:      'Circles',
+        question:     'The Taj Mahal\'s central dome has a radius of 17.7 m. What is its circumference in metres? (Round to 1 decimal place.)',
+        hint:         'Circumference of a circle = 2 × π × radius. Use π = 3.14159, so: 2 × 3.14159 × 17.7.',
+        correctAnswer: 111.2,
+        tolerance:    3,
+        unit:         'metres',
+        explanation:  'Circumference = 2 × π × r = 2 × 3.14159 × 17.7 ≈ <strong>111.2 m</strong>.'
+      },
+
+      india_1: {
+        country:      'India',
+        building:     'Qutb Minar, Delhi, India',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Qutub_minar%2CDelhi.JPG/500px-Qutub_minar%2CDelhi.JPG',
+        culturalNote: 'Completed c. 1220 CE, the Qutb Minar is the world\'s tallest brick minaret at 72.5 m. Its five storeys each have distinct decoration, blending Islamic calligraphy with Indian craftsmanship.',
+        concept:      'Trigonometry',
+        question:     'The Qutb Minar is 72.5 m tall. If you stand 60 m from its base, what is the angle of elevation to the top in degrees? (Round to 1 decimal place.)',
+        hint:         'Use inverse tangent: angle = tan⁻¹(opposite ÷ adjacent) = tan⁻¹(height ÷ distance from base). On a calculator: tan⁻¹(72.5 ÷ 60).',
+        correctAnswer: 50.4,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(height ÷ distance) = tan⁻¹(72.5 ÷ 60) = tan⁻¹(1.208) ≈ <strong>50.4°</strong>.'
+      },
+
+      india_2: {
+        country:      'India',
+        building:     'Jantar Mantar, Jaipur, India',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Jyotish_Yantralaya%2C_Jantar_Mantar.JPG/960px-Jyotish_Yantralaya%2C_Jantar_Mantar.JPG',
+        culturalNote: 'Built in 1734 by Maharaja Jai Singh II, Jantar Mantar contains the world\'s largest stone sundial — the Samrat Yantra. Its gnomon (shadow-casting ramp) is a massive right triangle aligned to Earth\'s axis.',
+        concept:      'Pythagoras',
+        question:     'The Samrat Yantra sundial\'s gnomon ramp has a horizontal base of 44 m and a vertical height of 27 m. How long is the ramp (hypotenuse) in metres? (Round to 1 decimal place.)',
+        hint:         'Pythagoras: hypotenuse² = base² + height². So hypotenuse = √(44² + 27²). Calculate 44² = 1936, 27² = 729, add them, then take the square root.',
+        correctAnswer: 51.6,
+        tolerance:    2,
+        unit:         'metres',
+        explanation:  'hypotenuse = √(base² + height²) = √(44² + 27²) = √(1936 + 729) = √2665 ≈ <strong>51.6 m</strong>.'
+      },
+
+      // ——————————————————— EGYPT ———————————————————
+
+      egypt_0: {
+        country:      'Egypt',
+        building:     'Great Pyramid of Giza, Egypt',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Pyramid_of_Cheops_-_side.jpg/960px-Pyramid_of_Cheops_-_side.jpg',
+        culturalNote: 'Built c. 2560 BCE for Pharaoh Khufu, the Great Pyramid stood as the tallest human-made structure for over 3,800 years. Its four triangular faces are aligned almost perfectly to the cardinal directions.',
+        concept:      'Trigonometry',
+        question:     'The Great Pyramid has a square base of 230 m per side and a height of 146 m. What is the angle (°) between the base and a triangular face?',
+        hint:         'Draw a right triangle from the centre of the base to the apex. The opposite side is the height (146 m), the adjacent side is half the base length (115 m). angle = tan⁻¹(146 ÷ 115).',
+        correctAnswer: 51.8,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'Half the base = 230 ÷ 2 = 115 m. angle = tan⁻¹(height ÷ half-base) = tan⁻¹(146 ÷ 115) = tan⁻¹(1.270) ≈ <strong>51.8°</strong>.'
+      },
+
+      egypt_1: {
+        country:      'Egypt',
+        building:     'Karnak Temple Complex, Luxor, Egypt',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Karnak_temple_complex_2012.JPG/960px-Karnak_temple_complex_2012.JPG',
+        culturalNote: 'Built over 2,000 years by successive pharaohs, Karnak is the largest religious building ever constructed. Its Great Hypostyle Hall held 134 enormous columns and was once the largest columned room on Earth.',
+        concept:      'Area',
+        question:     'The Great Hypostyle Hall at Karnak measures 103 m long and 52 m wide. What is its floor area in square metres?',
+        hint:         'Area of a rectangle = length × width. Multiply the two dimensions together.',
+        correctAnswer: 5356,
+        tolerance:    0,
+        unit:         'm²',
+        explanation:  'Area = length × width = 103 × 52 = <strong>5,356 m²</strong>.'
+      },
+
+      egypt_2: {
+        country:      'Egypt',
+        building:     'Abu Simbel Temples, Egypt',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/SFEC_EGYPT_ABUSIMBEL_2006-003.JPG/500px-SFEC_EGYPT_ABUSIMBEL_2006-003.JPG',
+        culturalNote: 'Carved from a cliff by Ramesses II c. 1264 BCE, Abu Simbel features four 20-metre statues of the pharaoh. In 1968, the entire temple was moved 65 m uphill to save it from rising Nile waters.',
+        concept:      'Pythagoras',
+        question:     'The main façade of Abu Simbel is 38 m wide and 31 m tall. What is the length of its diagonal in metres? (Round to 1 decimal place.)',
+        hint:         'Use Pythagoras: diagonal² = width² + height². So diagonal = √(38² + 31²). Calculate 38² = 1444, 31² = 961, add them, then take the square root.',
+        correctAnswer: 49.0,
+        tolerance:    2,
+        unit:         'metres',
+        explanation:  'diagonal = √(width² + height²) = √(38² + 31²) = √(1444 + 961) = √2405 ≈ <strong>49.0 m</strong>.'
+      },
+
+      // ——————————————————— CAMBODIA ———————————————————
+
+      cambodia_0: {
+        country:      'Cambodia',
+        building:     'Angkor Wat, Siem Reap, Cambodia',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Angkor_Wat_with_its_reflection_%28cropped%29.jpg/800px-Angkor_Wat_with_its_reflection_%28cropped%29.jpg',
+        culturalNote: 'Constructed in the 12th century by King Suryavarman II, Angkor Wat is the world\'s largest religious monument. Its layout encodes the Hindu cosmology of Mount Meru at the centre of the universe.',
+        concept:      'Perimeter',
+        question:     'Angkor Wat\'s rectangular moat measures 1,500 m long and 1,300 m wide. What is the perimeter of the moat in metres?',
+        hint:         'Perimeter of a rectangle = 2 × (length + width). Add the length and width first, then multiply by 2.',
+        correctAnswer: 5600,
+        tolerance:    0,
+        unit:         'metres',
+        explanation:  'Perimeter = 2 × (length + width) = 2 × (1500 + 1300) = 2 × 2800 = <strong>5,600 m</strong>.'
+      },
+
+      cambodia_1: {
+        country:      'Cambodia',
+        building:     'Bayon Temple, Angkor Thom, Cambodia',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Bayon%2C_Angkor_Thom%2C_Camboya%2C_2013-08-17%2C_DD_37.JPG/960px-Bayon%2C_Angkor_Thom%2C_Camboya%2C_2013-08-17%2C_DD_37.JPG',
+        culturalNote: 'King Jayavarman VII built Bayon in the late 12th century at the centre of his capital Angkor Thom. Its 54 towers are each carved with enormous serene faces — believed to represent the Bodhisattva Avalokiteshvara.',
+        concept:      'Perimeter',
+        question:     'The outer wall of Angkor Thom is a perfect square, with each side measuring 3,000 m. What is the total perimeter of the city walls in metres?',
+        hint:         'Perimeter of a square = 4 × side length. Multiply the side length by 4.',
+        correctAnswer: 12000,
+        tolerance:    0,
+        unit:         'metres',
+        explanation:  'Perimeter = 4 × side = 4 × 3,000 = <strong>12,000 m</strong> (12 km).'
+      },
+
+      cambodia_2: {
+        country:      'Cambodia',
+        building:     'Banteay Srei, Angkor, Cambodia',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/4/40/Banteay_Srei.jpg',
+        culturalNote: 'Dedicated to the Hindu god Shiva, Banteay Srei (10th century CE) is celebrated for its intricate pink sandstone carvings. Its name means "Citadel of the Women" — legend holds that it was built by women.',
+        concept:      'Trigonometry',
+        question:     'A Banteay Srei tower is 10 m tall with a square base 8 m wide. When its shadow equals the base width (8 m), what is the sun\'s elevation angle in degrees? (Round to 1 decimal place.)',
+        hint:         'Use inverse tangent: angle = tan⁻¹(opposite ÷ adjacent) = tan⁻¹(tower height ÷ shadow length). On a calculator: tan⁻¹(10 ÷ 8).',
+        correctAnswer: 51.3,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(height ÷ shadow) = tan⁻¹(10 ÷ 8) = tan⁻¹(1.25) ≈ <strong>51.3°</strong>.'
+      },
+
+      // ——————————————————— PERU ———————————————————
+
+      peru_0: {
+        country:      'Peru',
+        building:     'Machu Picchu, Cusco Region, Peru',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Machu_Picchu%2C_Per%C3%BA%2C_2015-07-30%2C_DD_47.JPG/800px-Machu_Picchu%2C_Per%C3%BA%2C_2015-07-30%2C_DD_47.JPG',
+        culturalNote: 'Built by the Inca emperor Pachacuti c. 1450 CE, Machu Picchu\'s agricultural terraces were engineered at precise angles to maximise sunlight and prevent erosion on steep Andean slopes.',
+        concept:      'Slope & Angles',
+        question:     'An Inca terrace wall rises 2 m vertically for every 1.5 m of horizontal distance. What is the angle of inclination in degrees?',
+        hint:         'Use inverse tangent: angle = tan⁻¹(rise ÷ run) = tan⁻¹(vertical ÷ horizontal). On a calculator: tan⁻¹(2 ÷ 1.5).',
+        correctAnswer: 53.1,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(rise ÷ run) = tan⁻¹(2 ÷ 1.5) = tan⁻¹(1.333) ≈ <strong>53.1°</strong>.'
+      },
+
+      peru_1: {
+        country:      'Peru',
+        building:     'Sacsayhuamán, Cusco, Peru',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Sacsayhuam%C3%A1n%2C_Cusco%2C_Per%C3%BA%2C_2015-07-31%2C_DD_05.JPG/960px-Sacsayhuam%C3%A1n%2C_Cusco%2C_Per%C3%BA%2C_2015-07-31%2C_DD_05.JPG',
+        culturalNote: 'The Inca fortress of Sacsayhuamán (c. 1440 CE) features three massive zigzag walls of interlocking stone. Some stones weigh over 120 tonnes and were moved without wheels — a feat of Andean engineering.',
+        concept:      'Trigonometry',
+        question:     'The zigzag walls of Sacsayhuamán rise 9 m vertically over a horizontal run of 12 m. What is the angle of inclination in degrees? (Round to 1 decimal place.)',
+        hint:         'Use inverse tangent: angle = tan⁻¹(rise ÷ run) = tan⁻¹(vertical rise ÷ horizontal run). On a calculator: tan⁻¹(9 ÷ 12).',
+        correctAnswer: 36.9,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(rise ÷ run) = tan⁻¹(9 ÷ 12) = tan⁻¹(0.75) ≈ <strong>36.9°</strong>.'
+      },
+
+      peru_2: {
+        country:      'Peru',
+        building:     'Chan Chan, Trujillo, Peru',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Vast_Abobe_Ruins_at_Chan_Chan.JPG/960px-Vast_Abobe_Ruins_at_Chan_Chan.JPG',
+        culturalNote: 'Founded c. 850 CE, Chan Chan was the capital of the Chimu Empire and the largest pre-Columbian city in South America. Its ten walled ciudadelas (royal compounds) were built from adobe bricks.',
+        concept:      'Perimeter',
+        question:     'The Tschudi Complex at Chan Chan is approximately 400 m long and 250 m wide. What is the perimeter of this ciudadela in metres?',
+        hint:         'Perimeter of a rectangle = 2 × (length + width). Add the length and width first, then multiply by 2.',
+        correctAnswer: 1300,
+        tolerance:    0,
+        unit:         'metres',
+        explanation:  'Perimeter = 2 × (length + width) = 2 × (400 + 250) = 2 × 650 = <strong>1,300 m</strong>.'
+      },
+
+      // ——————————————————— JORDAN ———————————————————
+
+      jordan_0: {
+        country:      'Jordan',
+        building:     'Al-Khazneh (The Treasury), Petra, Jordan',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/The_Treasury%2C_Petra%2C_Jordan1.jpg/800px-The_Treasury%2C_Petra%2C_Jordan1.jpg',
+        culturalNote: 'Carved directly into rose-red sandstone cliffs by the Nabataean people c. 1st century BCE, the Treasury\'s façade blends Hellenistic, Egyptian, and Nabataean architectural styles.',
+        concept:      'Trigonometry',
+        question:     'A column at Petra stands 12 m tall and casts a shadow 8 m long. What is the sun\'s angle of elevation in degrees?',
+        hint:         'Use inverse tangent: angle = tan⁻¹(opposite ÷ adjacent) = tan⁻¹(column height ÷ shadow length). On a calculator: tan⁻¹(12 ÷ 8).',
+        correctAnswer: 56.3,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(height ÷ shadow) = tan⁻¹(12 ÷ 8) = tan⁻¹(1.5) ≈ <strong>56.3°</strong>.'
+      },
+
+      jordan_1: {
+        country:      'Jordan',
+        building:     'Oval Forum (Oval Plaza), Jerash, Jordan',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Jerash_the_Oval_Plaza_in_springtime.jpg/500px-Jerash_the_Oval_Plaza_in_springtime.jpg',
+        culturalNote: 'Built in the 1st–2nd century CE, the Oval Forum at Jerash is the finest example of a Roman oval plaza in the Middle East. Its unique elliptical shape, ringed by Ionic columns, served as a crossroads between two colonnaded streets.',
+        concept:      'Circles',
+        question:     'The southern end of Jerash\'s colonnaded street opens into a circular plaza with a radius of 24 m. What is the circumference of this circle in metres? (Round to 1 decimal place.)',
+        hint:         'Circumference = 2 × π × radius. Use π = 3.14159, so: 2 × 3.14159 × 24.',
+        correctAnswer: 150.8,
+        tolerance:    3,
+        unit:         'metres',
+        explanation:  'Circumference = 2 × π × r = 2 × 3.14159 × 24 ≈ <strong>150.8 m</strong>.'
+      },
+
+      jordan_2: {
+        country:      'Jordan',
+        building:     'Wadi Rum Desert, Jordan',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Wadi_Rum_BW_6.JPG/960px-Wadi_Rum_BW_6.JPG',
+        culturalNote: 'Known as the "Valley of the Moon," Wadi Rum is a vast desert landscape in southern Jordan. Its towering sandstone and granite massifs have sheltered Nabataean inscriptions and ancient trade routes for thousands of years.',
+        concept:      'Trigonometry',
+        question:     'Jebel Umm Adaami, Jordan\'s highest peak in Wadi Rum, rises 1,854 m above the desert floor. If you are standing 2,000 m horizontally from the base, what is the angle of elevation to the peak in degrees? (Round to 1 decimal place.)',
+        hint:         'Use inverse tangent: angle = tan⁻¹(opposite ÷ adjacent) = tan⁻¹(height ÷ horizontal distance). On a calculator: tan⁻¹(1854 ÷ 2000).',
+        correctAnswer: 42.8,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'angle = tan⁻¹(height ÷ horizontal) = tan⁻¹(1854 ÷ 2000) = tan⁻¹(0.927) ≈ <strong>42.8°</strong>.'
+      },
+
+      // ——————————————————— MALI ———————————————————
+
+      mali_0: {
+        country:      'Mali',
+        building:     'Great Mosque of Djenné, Mali',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/MaliDjenn%C3%A9Mosqu%C3%A9e.JPG/800px-MaliDjenn%C3%A9Mosqu%C3%A9e.JPG',
+        culturalNote: 'The largest mud-brick building in the world, this mosque (rebuilt 1907) has been replastered every year in a community festival for centuries — a living example of Islamic West African architecture.',
+        concept:      'Area',
+        question:     'The Great Mosque\'s main prayer hall measures approximately 75 m long and 50 m wide. What is its floor area in square metres?',
+        hint:         'Area of a rectangle = length × width. Multiply the two dimensions together.',
+        correctAnswer: 3750,
+        tolerance:    0,
+        unit:         'm²',
+        explanation:  'Area = length × width = 75 × 50 = <strong>3,750 m²</strong>.'
+      },
+
+      mali_1: {
+        country:      'Mali',
+        building:     'Sankore Mosque, Timbuktu, Mali',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Sankore_Mosque_in_Timbuktu.jpg/960px-Sankore_Mosque_in_Timbuktu.jpg',
+        culturalNote: 'Founded c. 1100 CE, the Sankore Mosque in Timbuktu was the centre of the world\'s first Islamic university, enrolling up to 25,000 students at its peak in the 15th century.',
+        concept:      'Area',
+        question:     'The Sankore Mosque has a roughly rectangular base measuring 31 m long and 29 m wide. What is its floor area in square metres?',
+        hint:         'Area of a rectangle = length × width. Multiply the two dimensions together.',
+        correctAnswer: 899,
+        tolerance:    0,
+        unit:         'm²',
+        explanation:  'Area = length × width = 31 × 29 = <strong>899 m²</strong>.'
+      },
+
+      mali_2: {
+        country:      'Mali',
+        building:     'Tomb of Askia, Gao, Mali',
+        imageUrl:     'https://upload.wikimedia.org/wikipedia/commons/a/ab/Askia.jpg',
+        culturalNote: 'Built c. 1495 CE by Askia the Great, this earthen pyramid in Gao is the most important monument of the Songhai Empire. Its stepped mud-brick form resembles a pointed mountain rising from the Saharan plain.',
+        concept:      'Trigonometry',
+        question:     'The Tomb of Askia is a pointed pyramid 17 m tall with a square base of 22 m per side. What is the angle (°) that the face makes with the ground? (Round to 1 decimal place.)',
+        hint:         'Draw a right triangle from the centre of the base to the apex. The opposite side is the height (17 m), the adjacent side is half the base length (22 ÷ 2 = 11 m). angle = tan⁻¹(17 ÷ 11).',
+        correctAnswer: 57.1,
+        tolerance:    3,
+        unit:         'degrees',
+        explanation:  'Half the base = 22 ÷ 2 = 11 m. angle = tan⁻¹(height ÷ half-base) = tan⁻¹(17 ÷ 11) = tan⁻¹(1.545) ≈ <strong>57.1°</strong>.'
+      }
+
+    };
+
+    // =====================================================
+    //  STATE
+    // =====================================================
+    let currentChallenge = null;
+
+    // =====================================================
+    //  VALIDATION
+    // =====================================================
+    function validateAnswer(userAnswer, correctAnswer, tolerance) {
+      const num = parseFloat(userAnswer);
+      if (isNaN(num)) return { status: 'invalid', message: 'Please enter a number.' };
+
+      const diff = Math.abs(num - correctAnswer);
+      if (diff <= tolerance)                        return { status: 'correct' };
+      if (tolerance > 0 && diff <= tolerance * 2)  return { status: 'close' };
+      return { status: 'incorrect' };
+    }
+
+    // =====================================================
+    //  CLAUDE API — SOCRATIC FEEDBACK
+    // =====================================================
+    async function getSocraticFeedback(challenge, userAnswer, result) {
+      const prompt = `You are a Socratic geometry tutor. A student is learning geometry through Global South architecture.
+
+Building: ${challenge.building}
+Concept: ${challenge.concept}
+Question: ${challenge.question}
+Student's answer: ${userAnswer}
+Validation status: ${result.status}
+Correct answer: ${challenge.correctAnswer} ${challenge.unit}
+
+Provide Socratic feedback:
+IF CORRECT: Celebrate briefly (1 sentence), then ask ONE deepening question about why the math works or why the architects chose this design. Reference the building and culture.
+IF CLOSE or INCORRECT: Ask ONE guiding question to nudge them toward the answer. NEVER reveal it. Be warm and reference the architecture.
+
+Under 50 words. Return only the feedback text.`;
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 300,
+          temperature: 0.7,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      const data = await res.json();
+      return data.content[0].text;
+    }
+
+    // =====================================================
+    //  UI — START CHALLENGE (reads dropdown)
+    // =====================================================
+    function startChallenge() {
+      const sel = document.getElementById('challenge-select').value;
+      if (!sel) {
+        // Briefly highlight the dropdown
+        const s = document.getElementById('challenge-select');
+        s.style.borderColor = '#e74c3c';
+        setTimeout(() => s.style.borderColor = '', 1200);
+        return;
+      }
+      showChallenge(sel);
+    }
+
+    // =====================================================
+    //  UI — SHOW CHALLENGE
+    // =====================================================
+    function showChallenge(challengeId) {
+      currentChallenge = challengeId;
+      const c = challenges[challengeId];
+
+      // Image
+      const img = document.getElementById('challenge-img');
+      const placeholder = document.getElementById('img-placeholder');
+      img.src = c.imageUrl;
+      img.alt = c.building;
+      img.style.display = 'block';
+      placeholder.style.display = 'none';
+
+      // Text
+      document.getElementById('challenge-building').textContent  = c.building;
+      document.getElementById('challenge-concept').textContent   = c.concept;
+      document.getElementById('challenge-cultural').textContent  = c.culturalNote;
+      document.getElementById('challenge-question').textContent  = c.question;
+
+      // Hint — show toggle button only if a hint exists; hide the box itself
+      const hintArea   = document.getElementById('hint-area');
+      const hintBox    = document.getElementById('hint-box');
+      const hintToggle = hintArea.querySelector('.hint-toggle');
+      if (c.hint) {
+        hintBox.textContent   = c.hint;
+        hintBox.classList.add('hidden');
+        hintToggle.textContent = '💡 Show hint';
+        hintArea.classList.remove('hidden');
+      } else {
+        hintArea.classList.add('hidden');
+      }
+
+      // Answer — reset and load explanation
+      const answerBox    = document.getElementById('answer-box');
+      const answerToggle = document.querySelector('.answer-toggle');
+      answerBox.innerHTML = c.explanation || '';
+      answerBox.classList.add('hidden');
+      answerToggle.textContent = '📖 Show me the answer';
+
+      // Reset
+      document.getElementById('answer-input').value = '';
+      const fb = document.getElementById('feedback-area');
+      fb.className = 'feedback hidden';
+      fb.textContent = '';
+      document.getElementById('submit-btn').disabled = false;
+
+      // Swap views
+      document.getElementById('landing').classList.add('hidden');
+      document.getElementById('challenge-card').classList.remove('hidden');
+      document.getElementById('answer-input').focus();
+    }
+
+    // =====================================================
+    //  HINT TOGGLE
+    // =====================================================
+    function toggleHint() {
+      const hintBox    = document.getElementById('hint-box');
+      const hintToggle = document.querySelector('.hint-toggle');
+      const isHidden   = hintBox.classList.contains('hidden');
+      hintBox.classList.toggle('hidden');
+      hintToggle.textContent = isHidden ? '💡 Hide hint' : '💡 Show hint';
+    }
+
+    // =====================================================
+    //  ANSWER TOGGLE
+    // =====================================================
+    function toggleAnswer() {
+      const answerBox    = document.getElementById('answer-box');
+      const answerToggle = document.querySelector('.answer-toggle');
+      const isHidden     = answerBox.classList.contains('hidden');
+      answerBox.classList.toggle('hidden');
+      answerToggle.textContent = isHidden ? '📖 Hide answer' : '📖 Show me the answer';
+    }
+
+    // =====================================================
+    //  IMAGE ERROR HANDLER
+    // =====================================================
+    function handleImgError(img) {
+      img.style.display = 'none';
+      document.getElementById('img-placeholder').style.display = 'flex';
+    }
+
+    // =====================================================
+    //  UI — SUBMIT ANSWER
+    // =====================================================
+    async function submitAnswer() {
+      const c   = challenges[currentChallenge];
+      const raw = document.getElementById('answer-input').value.trim();
+      const fb  = document.getElementById('feedback-area');
+      const btn = document.getElementById('submit-btn');
+
+      if (!raw) { displayFeedback('Please enter a number.', false, true); return; }
+
+      const result = validateAnswer(raw, c.correctAnswer, c.tolerance);
+      if (result.status === 'invalid') { displayFeedback(result.message, false, true); return; }
+
+      btn.disabled = true;
+      fb.className = 'feedback';
+      fb.innerHTML = '<span class="spinner"></span> Getting feedback…';
+      fb.classList.remove('hidden');
+
+      try {
+        const text = await getSocraticFeedback(c, raw, result);
+        displayFeedback(text, result.status === 'correct', false);
+      } catch (err) {
+        console.error('API error:', err);
+        displayFeedback('Unable to reach the feedback system. Please try again.', false, true);
+        btn.disabled = false;
+      }
+    }
+
+    // =====================================================
+    //  UI — DISPLAY FEEDBACK
+    // =====================================================
+    function displayFeedback(text, isCorrect, isError) {
+      const fb = document.getElementById('feedback-area');
+      fb.className = 'feedback';
+      if (isError)         fb.classList.add('error');
+      else if (!isCorrect) fb.classList.add('incorrect');
+      fb.textContent = text;
+      fb.classList.remove('hidden');
+    }
+
+    // =====================================================
+    //  UI — RETURN TO MENU
+    // =====================================================
+    function returnToMenu() {
+      currentChallenge = null;
+      document.getElementById('answer-input').value = '';
+      const fb = document.getElementById('feedback-area');
+      fb.className = 'feedback hidden';
+      fb.textContent = '';
+      document.getElementById('submit-btn').disabled = false;
+      // Reset hint
+      document.getElementById('hint-box').classList.add('hidden');
+      document.getElementById('hint-area').classList.add('hidden');
+      // Reset answer
+      document.getElementById('answer-box').classList.add('hidden');
+      document.querySelector('.answer-toggle').textContent = '📖 Show me the answer';
+      document.getElementById('challenge-card').classList.add('hidden');
+      document.getElementById('landing').classList.remove('hidden');
+    }
+
+    // =====================================================
+    //  KEYBOARD SHORTCUTS
+    // =====================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('answer-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') submitAnswer();
+      });
+      document.getElementById('challenge-select').addEventListener('keydown', e => {
+        if (e.key === 'Enter') startChallenge();
+      });
+    });
+  </script>
+
+</body>
+</html>
