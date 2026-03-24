@@ -6,12 +6,11 @@
   <title>The Architect's Apprentice</title>
 
   <!--
-    API KEY SETUP
-    Copy config.example.js → config.js and add your key there.
-    config.js is gitignored so it never gets committed.
-    If config.js is missing a one-time modal will ask for the key.
+    API KEY: Handled server-side via the /api/claude Vercel serverless function.
+    No client-side key needed. config.js and the key modal have been removed.
   -->
-  <script src="config.js" onerror="/* config.js not present — will prompt at runtime */"></script>
+  <!-- config.js removed — API key handled server-side via /api/claude -->
+  <!-- <script src="config.js" onerror="/* config.js not present — will prompt at runtime */"></script> -->
 
   <style>
     /* =====================
@@ -339,23 +338,9 @@
 </head>
 <body>
 
-  <!-- ==================== API KEY MODAL ==================== -->
-  <div id="key-modal" class="modal-overlay hidden">
-    <div class="modal-box">
-      <h2>🔑 Enter your API key</h2>
-      <p>
-        The Architect's Apprentice uses the Claude API to give you personalised Socratic feedback.
-        Paste your Anthropic API key below to get started.<br><br>
-        To skip this prompt in future, add your key to <code>config.js</code>
-        (copy <code>config.example.js</code> as a starting point).
-      </p>
-      <input type="password" id="modal-key-input"
-             placeholder="sk-ant-api03-…"
-             autocomplete="off" spellcheck="false" />
-      <p id="modal-key-error" class="modal-error"></p>
-      <button onclick="submitModalKey()">Start playing →</button>
-    </div>
-  </div>
+  <!-- API KEY MODAL removed — no longer needed, key handled server-side -->
+  <!-- Keeping hidden placeholder div so any stray getElementById('key-modal') calls don't throw -->
+  <div id="key-modal" class="modal-overlay hidden" style="display:none!important"></div>
 
   <div class="page-wrapper">
 
@@ -469,39 +454,12 @@
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // =====================================================
-    //  API KEY — loaded from config.js if present, else modal
+    //  API KEY — removed; requests now go through /api/claude (server-side key)
     // =====================================================
-    let ANTHROPIC_API_KEY = (typeof window.ANTHROPIC_API_KEY === 'string' && window.ANTHROPIC_API_KEY)
-      ? window.ANTHROPIC_API_KEY
-      : '';
+    // submitModalKey kept as no-op in case any stale reference calls it
+    function submitModalKey() {}
 
-    window.addEventListener('DOMContentLoaded', () => {
-      if (!ANTHROPIC_API_KEY) {
-        document.getElementById('key-modal').classList.remove('hidden');
-        document.getElementById('modal-key-input').focus();
-      }
-    });
-
-    function submitModalKey() {
-      const val   = document.getElementById('modal-key-input').value.trim();
-      const errEl = document.getElementById('modal-key-error');
-
-      if (!val) { errEl.textContent = 'Please paste your API key.'; return; }
-      if (!val.startsWith('sk-ant-')) {
-        errEl.textContent = "Doesn't look right — Anthropic keys start with sk-ant-";
-        return;
-      }
-
-      ANTHROPIC_API_KEY = val;
-      document.getElementById('modal-key-input').value = ''; // clear from DOM
-      document.getElementById('key-modal').classList.add('hidden');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('modal-key-input').addEventListener('keydown', e => {
-        if (e.key === 'Enter') submitModalKey();
-      });
-    });
+    // modal-key-input listener removed (element no longer in DOM)
 
     // =====================================================
     //  CHALLENGE DATA — 24 challenges, 3 per country
@@ -900,13 +858,10 @@ IF CLOSE or INCORRECT: Ask ONE guiding question to nudge them toward the answer.
 
 Under 50 words. Return only the feedback text.`;
 
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/claude', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',

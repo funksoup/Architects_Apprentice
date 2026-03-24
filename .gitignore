@@ -1,4 +1,9 @@
 # API key — never commit this
 .env
 config.js
+
+# Dependencies
 node_modules/
+
+# macOS
+.DS_Store
