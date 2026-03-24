@@ -69,3 +69,36 @@ The live demo runs on [Vercel](https://vercel.com) with a serverless function th
 - [Claude API](https://www.anthropic.com/api) (`claude-sonnet-4-20250514`) for Socratic feedback
 - [Vercel](https://vercel.com) serverless functions for secure API proxying
 - Images from [Wikimedia Commons](https://commons.wikimedia.org/)
+
+---
+
+## Image credits
+
+All images sourced from [Wikimedia Commons](https://commons.wikimedia.org/) under Creative Commons licences.
+
+| Image | Author | Licence |
+|-------|--------|---------|
+| Bete Giyorgis, Lalibela | [Jialiang Gao](https://commons.wikimedia.org/wiki/File:Bete_Giyorgis_Lalibela_Ethiopia.jpg) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Fasil Ghebbi, Gondar | [RyansWorld](https://commons.wikimedia.org/wiki/File:Fasiladas_Castle,_Gondar,_Amhara_Region,_Ethiopia.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Obelisk of Axum | [Bair175](https://commons.wikimedia.org/wiki/File:Large_obelisk_in_Axum,_Ethiopia.jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| El Castillo, Chichen Itza | [Daniel Schwen](https://commons.wikimedia.org/wiki/File:Chichen_Itza_3.jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Pyramid of the Sun, Teotihuacan | [Mariordo (Mario Roberto Durán Ortiz)](https://commons.wikimedia.org/wiki/File:Sun_Pyramid_05_2015_Teotihuacan_3304.JPG) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Monte Albán, Oaxaca | [Pablo Fossas](https://commons.wikimedia.org/wiki/File:Monte_Alban,_Oaxaca._Agosto_2009.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Taj Mahal, Agra | [Yann; edited by King of Hearts](https://commons.wikimedia.org/wiki/File:Taj_Mahal,_Agra,_India_edit2.jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Qutb Minar, Delhi | [Ramesam](https://commons.wikimedia.org/wiki/File:Qutub_minar,Delhi.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Jantar Mantar, Jaipur | [S Sundararajan](https://commons.wikimedia.org/wiki/File:Jyotish_Yantralaya,_Jantar_Mantar.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Great Pyramid of Giza | [kallerna](https://commons.wikimedia.org/wiki/File:Pyramid_of_Cheops_-_side.jpg) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Karnak Temple Complex | [Taranis-iuppiter](https://commons.wikimedia.org/wiki/File:Karnak_temple_complex_2012.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Abu Simbel | [Steve F-E-Cameron (Merlin-UK)](https://commons.wikimedia.org/wiki/File:SFEC_EGYPT_ABUSIMBEL_2006-003.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Angkor Wat | [Satdeep Gill](https://commons.wikimedia.org/wiki/File:Angkor_Wat_with_its_reflection_(cropped).jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Bayon, Angkor Thom | [Diego Delso](https://commons.wikimedia.org/wiki/File:Bayon,_Angkor_Thom,_Camboya,_2013-08-17,_DD_37.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Banteay Srei | [Michel Estermann](https://commons.wikimedia.org/wiki/File:Banteay_Srei.jpg) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Machu Picchu | [Draceane](https://commons.wikimedia.org/wiki/File:Machu_Picchu,_2023_(012).jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Sacsayhuamán, Cusco | [Diego Delso](https://commons.wikimedia.org/wiki/File:Sacsayhuam%C3%A1n,_Cusco,_Per%C3%BA,_2015-07-31,_DD_05.JPG) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Chan Chan, Trujillo | [Kevstan](https://commons.wikimedia.org/wiki/File:Vast_Abobe_Ruins_at_Chan_Chan.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Al-Khazneh (Treasury), Petra | [Graham Racher / MrPanyGoff](https://commons.wikimedia.org/wiki/File:Al_Khazneh_Petra_edit_2.jpg) | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) |
+| Oval Forum, Jerash | [Kariman Mango](https://commons.wikimedia.org/wiki/File:Jerash_the_Oval_Plaza_in_springtime.jpg) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| Wadi Rum | [Berthold Werner](https://commons.wikimedia.org/wiki/File:Wadi_Rum_BW_6.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Great Mosque of Djenné | [BluesyPete](https://commons.wikimedia.org/wiki/File:MaliDjenn%C3%A9Mosqu%C3%A9e.JPG) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| Sankore Mosque, Timbuktu | [upyernoz](https://commons.wikimedia.org/wiki/File:Sankore_Mosque_in_Timbuktu.jpg) | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) |
+| Tomb of Askia, Gao | [Taguelmoust](https://commons.wikimedia.org/wiki/File:Askia.jpg) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
