@@ -2,7 +2,11 @@
 
 **An interactive exploration of geometry through the lens of architecture in the Global South.**
 
-[▶ Live Demo](https://funksoup.github.io/Architects_Apprentice/)
+[▶ Live Demo](https://architects-apprentice.vercel.app/)
+
+---
+
+![Landing page — choose a challenge](screenshots/ArchitectsApp_landing.png)
 
 ---
 
@@ -11,6 +15,8 @@
 The Architect's Apprentice presents geometry problems grounded in real buildings across the Global South. Each challenge is rooted in the actual dimensions of a landmark — from the Great Pyramid of Giza to the Tomb of Askia in Mali — and accompanied by cultural context about the site.
 
 Submit an answer and the Claude AI gives you personalised Socratic feedback: if you're right, it deepens the question; if you're off, it nudges you toward the answer without giving it away. A hint and a step-by-step answer reveal are always available.
+
+![A challenge in action](screenshots/ArchitectsApp_question.png)
 
 **24 challenges across 8 countries:**
 
@@ -31,7 +37,7 @@ Submit an answer and the Claude AI gives you personalised Socratic feedback: if 
 
 ## Running locally
 
-The game is a single `index.html` file — no build step, no dependencies.
+The game is a single `index.html` file — no build step, no dependencies for the frontend.
 
 ```bash
 git clone https://github.com/funksoup/Architects_Apprentice.git
@@ -39,22 +45,21 @@ cd Architects_Apprentice
 open index.html
 ```
 
-### API key setup
+> **Note:** When running locally, `/api/claude` won't be available. To test the full experience including Claude feedback, deploy to Vercel (see below) or run a local server that handles the API route.
 
-Socratic feedback is powered by the [Claude API](https://www.anthropic.com/api). You'll need an Anthropic API key.
+---
 
-1. Copy the example config file:
-   ```bash
-   cp config.example.js config.js
+## Deploying to Vercel
+
+The live demo runs on [Vercel](https://vercel.com) with a serverless function that proxies requests to the Claude API — no API key is exposed to the browser.
+
+1. Fork or clone this repo and push to GitHub
+2. Import the repo into Vercel (Add New Project → Import Git Repository)
+3. In Vercel → Settings → Environment Variables, add:
    ```
-2. Open `config.js` and replace `YOUR_API_KEY_HERE` with your key:
-   ```js
-   window.ANTHROPIC_API_KEY = 'sk-ant-...';
+   API_KEY=sk-ant-...
    ```
-
-`config.js` is gitignored and will never be committed. If you skip this step, the game will prompt you for a key at runtime instead.
-
-> **Note for the live demo:** The live demo does not include an API key. You will be prompted to enter your own key when the page loads.
+4. Deploy — Vercel will auto-deploy on every push to `main`
 
 ---
 
@@ -62,4 +67,5 @@ Socratic feedback is powered by the [Claude API](https://www.anthropic.com/api).
 
 - Vanilla HTML, CSS, and JavaScript (single file, no frameworks)
 - [Claude API](https://www.anthropic.com/api) (`claude-sonnet-4-20250514`) for Socratic feedback
+- [Vercel](https://vercel.com) serverless functions for secure API proxying
 - Images from [Wikimedia Commons](https://commons.wikimedia.org/)
